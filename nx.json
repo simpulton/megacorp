@@ -15,6 +15,9 @@
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
   "nxCloudId": "68dd967a82c2f31a9551a70d",
+  "tui": {
+    "enabled": false
+  },
   "plugins": [
     {
       "plugin": "@nx/js/typescript",
@@ -63,6 +66,36 @@
   "targetDefaults": {
     "test": {
       "dependsOn": ["^build"]
+    },
+    "build": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false
+    },
+    "start": {
+      "cache": false
+    },
+    "serve-static": {
+      "cache": false
+    },
+    "build-deps": {
+      "cache": false
+    },
+    "watch-deps": {
+      "cache": false
+    },
+    "lint": {
+      "cache": false
+    },
+    "typecheck": {
+      "cache": false
+    },
+    "e2e": {
+      "cache": false
+    },
+    "e2e-ci": {
+      "cache": false
     }
   },
   "generators": {
