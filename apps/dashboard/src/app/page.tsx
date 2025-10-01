@@ -12,6 +12,7 @@ export default function Index() {
         <div className="container">
           <div id="welcome">
             <h1> Welcome to the dashboard!</h1>
+            <p>This is the dashboard for the application.</p>
           </div>
         </div>
       </div>
