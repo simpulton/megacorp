@@ -27,7 +27,9 @@
     },
     "types": [
       "jest",
-      "node"
+      "node",
+      "react",
+      "react-dom"
     ],
     "outDir": "dist",
     "rootDir": "src",
