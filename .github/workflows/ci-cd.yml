@@ -2,7 +2,14 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [develop, staging, main]
+    branches: 
+      - develop
+      - staging 
+      - main
+      - 'feature/*'
+      - 'hotfix/*'
+      - 'release/*'
+      - 'preview/*'
   pull_request:
     branches: [develop, staging, main]
   workflow_dispatch:
@@ -62,6 +69,30 @@ jobs:
           echo "Commit: ${{ github.sha }}"
           # Add your deployment commands here
           # Example: docker build, kubectl apply, etc.
+
+  # Deploy feature branches to preview environment
+  deploy-preview:
+    if: |
+      github.event_name == 'push' && 
+      (startsWith(github.ref, 'refs/heads/feature/') || 
+       startsWith(github.ref, 'refs/heads/hotfix/') || 
+       startsWith(github.ref, 'refs/heads/release/') ||
+       startsWith(github.ref, 'refs/heads/preview/'))
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment: preview
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to Preview
+        run: |
+          echo "🚀 Deploying to PREVIEW environment"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Environment: preview-${{ github.ref_name }}"
+          # Add your preview deployment commands here
+          # Example: docker build with branch tag, deploy to preview namespace
 
   # Deploy to staging environment
   deploy-staging:
