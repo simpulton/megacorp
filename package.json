@@ -23,8 +23,7 @@
     "affected:lint": "nx affected --target=lint",
     "release:develop": "./scripts/release.sh develop",
     "release:staging": "./scripts/release.sh staging",
-    "release:production": "./scripts/release.sh production",
-    "release:preview": "./scripts/release.sh preview"
+    "release:production": "./scripts/release.sh production"
   },
   "private": true,
   "dependencies": {

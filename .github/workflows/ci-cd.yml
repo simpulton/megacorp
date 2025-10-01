@@ -4,12 +4,14 @@ on:
   push:
     branches: 
       - develop
-      - staging 
+      - staging
       - main
-      - 'feature/*'
-      - 'hotfix/*'
-      - 'release/*'
+      - 'dev/*'
+      - 'feat/*'
+      - 'staging/*'
       - 'preview/*'
+      - 'prod/*'
+      - 'release/*'
   pull_request:
     branches: [develop, staging, main]
   workflow_dispatch:
@@ -54,7 +56,11 @@ jobs:
 
   # Deploy to develop environment
   deploy-develop:
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    if: |
+      github.event_name == 'push' && 
+      (github.ref == 'refs/heads/develop' || 
+       startsWith(github.ref, 'refs/heads/dev/') || 
+       startsWith(github.ref, 'refs/heads/feat/'))
     needs: build-and-test
     runs-on: ubuntu-latest
     environment: develop
@@ -70,33 +76,14 @@ jobs:
           # Add your deployment commands here
           # Example: docker build, kubectl apply, etc.
 
-  # Deploy feature branches to preview environment
-  deploy-preview:
-    if: |
-      github.event_name == 'push' && 
-      (startsWith(github.ref, 'refs/heads/feature/') || 
-       startsWith(github.ref, 'refs/heads/hotfix/') || 
-       startsWith(github.ref, 'refs/heads/release/') ||
-       startsWith(github.ref, 'refs/heads/preview/'))
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    environment: preview
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Deploy to Preview
-        run: |
-          echo "🚀 Deploying to PREVIEW environment"
-          echo "Branch: ${{ github.ref_name }}"
-          echo "Commit: ${{ github.sha }}"
-          echo "Environment: preview-${{ github.ref_name }}"
-          # Add your preview deployment commands here
-          # Example: docker build with branch tag, deploy to preview namespace
 
   # Deploy to staging environment
   deploy-staging:
-    if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
+    if: |
+      github.event_name == 'push' && 
+      (github.ref == 'refs/heads/staging' || 
+       startsWith(github.ref, 'refs/heads/staging/') || 
+       startsWith(github.ref, 'refs/heads/preview/'))
     needs: build-and-test
     runs-on: ubuntu-latest
     environment: staging
@@ -113,7 +100,11 @@ jobs:
 
   # Deploy to production environment
   deploy-production:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: |
+      github.event_name == 'push' && 
+      (github.ref == 'refs/heads/main' || 
+       startsWith(github.ref, 'refs/heads/prod/') || 
+       startsWith(github.ref, 'refs/heads/release/'))
     needs: build-and-test
     runs-on: ubuntu-latest
     environment: production

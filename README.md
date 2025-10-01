@@ -4,27 +4,45 @@ A comprehensive CI/CD setup with three-environment deployment strategy and branc
 
 ## 🚀 Quick Start
 
-### Branch-Based Deployments
+### Branch-Based Deployment Strategy
 
 This repository automatically deploys based on branch naming conventions:
 
 | Branch Pattern | Environment | Purpose |
 |----------------|-------------|---------|
-| `develop` | **develop** | Development integration |
-| `staging` | **staging** | Pre-production testing |
-| `main` | **production** | Live production |
-| `feature/*` | **preview** | Feature testing |
-| `hotfix/*` | **preview** | Emergency fixes |
-| `release/*` | **preview** | Release candidates |
-| `preview/*` | **preview** | Design/QA review |
+| `develop`, `dev/*`, `feat/*` | **develop** | Development integration |
+| `staging`, `staging/*`, `preview/*` | **staging** | Pre-production testing |
+| `main`, `prod/*`, `release/*` | **production** | Live production |
 
-### Create a Feature Branch
+### Examples
 
 ```bash
-# Create and push a feature branch
-git checkout -b feature/user-dashboard
-git push origin feature/user-dashboard
-# → Automatically deploys to preview environment
+# Deploy to develop environment
+git checkout -b dev/feature-name
+git push origin dev/feature-name
+# → Automatically deploys to develop
+
+git checkout -b feat/user-auth
+git push origin feat/user-auth
+# → Automatically deploys to develop
+
+# Deploy to staging environment  
+git checkout -b staging/release-candidate
+git push origin staging/release-candidate
+# → Automatically deploys to staging
+
+git checkout -b preview/design-review
+git push origin preview/design-review
+# → Automatically deploys to staging
+
+# Deploy to production environment
+git checkout -b prod/hotfix
+git push origin prod/hotfix
+# → Automatically deploys to production
+
+git checkout -b release/v1.2.0
+git push origin release/v1.2.0
+# → Automatically deploys to production
 ```
 
 ### Manual Deployments
@@ -34,7 +52,6 @@ git push origin feature/user-dashboard
 npm run release:develop     # Deploy to develop
 npm run release:staging     # Deploy to staging  
 npm run release:production  # Deploy to production
-npm run release:preview     # Deploy to preview
 ```
 
 ## 🏗️ Architecture
@@ -50,7 +67,6 @@ npm run release:preview     # Deploy to preview
 - **`develop`** → All feature branches merge here
 - **`staging`** → Pre-production testing before main
 - **`main`** → Production-ready code
-- **`feature/*`** → Preview environments for testing
 
 ## 📋 Development Workflow
 
@@ -58,9 +74,8 @@ npm run release:preview     # Deploy to preview
 ```bash
 # Create feature branch
 git checkout -b feature/your-feature
-# Make changes and push
-git push origin feature/your-feature
-# → Auto-deploys to preview for testing
+# Make changes and create PR to develop
+# After merge → Auto-deploys to develop environment
 ```
 
 ### 2. Integration Testing
@@ -97,7 +112,6 @@ npm run e2e          # Run E2E tests
 npm run release:develop     # Deploy to develop
 npm run release:staging     # Deploy to staging
 npm run release:production  # Deploy to production
-npm run release:preview     # Deploy to preview
 ```
 
 ### Utilities

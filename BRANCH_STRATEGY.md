@@ -1,80 +1,71 @@
-# Branch Strategy & Naming Conventions
+# Branch Strategy
 
-This document outlines the branch naming conventions and deployment triggers for the CI/CD pipeline.
+This document outlines the three-environment deployment strategy for the CI/CD pipeline.
 
-## Branch Naming Conventions
+## Three-Environment Strategy
 
-### 🚧 Development Branches
+### 🚧 Development Environment
 - **`develop`** → Deploys to **develop** environment
-- **`feature/*`** → Deploys to **preview** environment
-  - Examples: `feature/user-auth`, `feature/dashboard-widget`
-  - Creates preview deployments for testing
+- Integration testing and development
+- All feature branches merge here
 
-### 🧪 Testing Branches  
+### 🧪 Staging Environment  
 - **`staging`** → Deploys to **staging** environment
-- **`preview/*`** → Deploys to **preview** environment
-  - Examples: `preview/design-review`, `preview/qa-testing`
-  - Creates isolated preview environments
+- Pre-production testing
+- E2E tests run here before production
 
-### 🚀 Release Branches
+### 🚀 Production Environment
 - **`main`** → Deploys to **production** environment
-- **`release/*`** → Deploys to **preview** environment
-  - Examples: `release/v1.2.0`, `release/hotfix-123`
-  - Pre-production testing before main merge
-
-### 🔥 Hotfix Branches
-- **`hotfix/*`** → Deploys to **preview** environment
-  - Examples: `hotfix/security-patch`, `hotfix/critical-bug`
-  - Emergency fixes with preview testing
+- Live production environment
+- Only stable, tested code reaches here
 
 ## Deployment Triggers
 
 | Branch Pattern | Environment | Trigger | Purpose |
 |----------------|-------------|---------|---------|
-| `develop` | develop | Push | Development integration |
-| `staging` | staging | Push | Pre-production testing |
-| `main` | production | Push | Live production |
-| `feature/*` | preview | Push | Feature testing |
-| `preview/*` | preview | Push | Design/QA review |
-| `release/*` | preview | Push | Release candidate testing |
-| `hotfix/*` | preview | Push | Emergency fix testing |
+| `develop`, `dev/*`, `feat/*` | develop | Push | Development integration |
+| `staging`, `staging/*`, `preview/*` | staging | Push | Pre-production testing |
+| `main`, `prod/*`, `release/*` | production | Push | Live production |
 
 ## Usage Examples
 
-### Feature Development
+### Deploy to Development
 ```bash
+# Create dev branch
+git checkout -b dev/user-dashboard
+git push origin dev/user-dashboard
+# → Automatically deploys to develop environment
+
 # Create feature branch
-git checkout -b feature/user-dashboard
-# Make changes and push
-git push origin feature/user-dashboard
-# → Triggers preview deployment
+git checkout -b feat/user-auth
+git push origin feat/user-auth
+# → Automatically deploys to develop environment
 ```
 
-### Release Preparation
+### Deploy to Staging
 ```bash
-# Create release branch
-git checkout -b release/v1.2.0
-# Push for testing
-git push origin release/v1.2.0
-# → Triggers preview deployment
-```
+# Create staging branch
+git checkout -b staging/release-candidate
+git push origin staging/release-candidate
+# → Automatically deploys to staging environment
 
-### Hotfix Process
-```bash
-# Create hotfix branch
-git checkout -b hotfix/security-patch
-# Push for testing
-git push origin hotfix/security-patch
-# → Triggers preview deployment
-```
-
-### Preview Testing
-```bash
 # Create preview branch
 git checkout -b preview/design-review
-# Push for stakeholder review
 git push origin preview/design-review
-# → Triggers preview deployment
+# → Automatically deploys to staging environment
+```
+
+### Deploy to Production
+```bash
+# Create prod branch
+git checkout -b prod/hotfix
+git push origin prod/hotfix
+# → Automatically deploys to production environment
+
+# Create release branch
+git checkout -b release/v1.2.0
+git push origin release/v1.2.0
+# → Automatically deploys to production environment
 ```
 
 ## Environment URLs
@@ -82,28 +73,15 @@ git push origin preview/design-review
 - **Develop**: `https://develop.yourdomain.com`
 - **Staging**: `https://staging.yourdomain.com`  
 - **Production**: `https://yourdomain.com`
-- **Preview**: `https://preview-{branch-name}.yourdomain.com`
 
 ## Branch Protection
 
 ### Required PRs
 - `feature/*` → `develop` (via PR)
-- `hotfix/*` → `main` (via PR)
-- `release/*` → `main` (via PR)
-- `preview/*` → `develop` (via PR)
+- `develop` → `staging` (via PR)
+- `staging` → `main` (via PR)
 
 ### Direct Pushes
 - `develop` → Direct push allowed
 - `staging` → Direct push allowed  
 - `main` → Direct push allowed (with protection)
-
-## Cleanup
-
-Preview environments are automatically cleaned up when branches are deleted:
-
-```bash
-# Delete feature branch
-git branch -d feature/user-dashboard
-git push origin --delete feature/user-dashboard
-# → Preview environment cleaned up
-```
