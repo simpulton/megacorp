@@ -113,7 +113,10 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Run E2E tests
-        run: npx nx e2e dashboard-e2e
+        run: |
+          echo "Starting E2E tests..."
+          echo "BASE_URL: ${{ env.BASE_URL || 'http://localhost:3000' }}"
+          npx nx e2e dashboard-e2e --verbose
 
   # Run E2E tests on production deployment
   e2e-production:
@@ -134,4 +137,7 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Run E2E tests
-        run: npx nx e2e dashboard-e2e
+        run: |
+          echo "Starting E2E tests..."
+          echo "BASE_URL: ${{ env.BASE_URL || 'http://localhost:3000' }}"
+          npx nx e2e dashboard-e2e --verbose
