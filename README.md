@@ -1,82 +1,184 @@
-# Megacorp
+# Release Branch Example Repository
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A comprehensive CI/CD setup with three-environment deployment strategy and branch-based preview deployments.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+## 🚀 Quick Start
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/next?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+### Branch-Based Deployments
 
-## Finish your CI setup
+This repository automatically deploys based on branch naming conventions:
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/ztFc2UrYH0)
+| Branch Pattern | Environment | Purpose |
+|----------------|-------------|---------|
+| `develop` | **develop** | Development integration |
+| `staging` | **staging** | Pre-production testing |
+| `main` | **production** | Live production |
+| `feature/*` | **preview** | Feature testing |
+| `hotfix/*` | **preview** | Emergency fixes |
+| `release/*` | **preview** | Release candidates |
+| `preview/*` | **preview** | Design/QA review |
 
+### Create a Feature Branch
 
-## Run tasks
+```bash
+# Create and push a feature branch
+git checkout -b feature/user-dashboard
+git push origin feature/user-dashboard
+# → Automatically deploys to preview environment
+```
 
-To run the dev server for your app, use:
+### Manual Deployments
 
-```sh
+```bash
+# Deploy to specific environments
+npm run release:develop     # Deploy to develop
+npm run release:staging     # Deploy to staging  
+npm run release:production  # Deploy to production
+npm run release:preview     # Deploy to preview
+```
+
+## 🏗️ Architecture
+
+### Three-Environment Strategy
+
+- **🚧 Develop** - Integration testing and development
+- **🧪 Staging** - Pre-production testing with E2E tests
+- **🚀 Production** - Live production environment
+
+### Branch Strategy
+
+- **`develop`** → All feature branches merge here
+- **`staging`** → Pre-production testing before main
+- **`main`** → Production-ready code
+- **`feature/*`** → Preview environments for testing
+
+## 📋 Development Workflow
+
+### 1. Feature Development
+```bash
+# Create feature branch
+git checkout -b feature/your-feature
+# Make changes and push
+git push origin feature/your-feature
+# → Auto-deploys to preview for testing
+```
+
+### 2. Integration Testing
+```bash
+# Create PR to develop
+# After merge → Auto-deploys to develop environment
+```
+
+### 3. Pre-Production Testing
+```bash
+# Create PR from develop → staging
+# After merge → Auto-deploys to staging + runs E2E tests
+```
+
+### 4. Production Release
+```bash
+# Create PR from staging → main
+# After merge → Auto-deploys to production
+```
+
+## 🛠️ Available Commands
+
+### Development
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run test         # Run tests
+npm run lint         # Run linting
+npm run e2e          # Run E2E tests
+```
+
+### Deployment
+```bash
+npm run release:develop     # Deploy to develop
+npm run release:staging     # Deploy to staging
+npm run release:production  # Deploy to production
+npm run release:preview     # Deploy to preview
+```
+
+### Utilities
+```bash
+npm run clean        # Reset Nx cache
+npm run graph        # Show project dependency graph
+npm run affected:build  # Build only affected projects
+npm run affected:test   # Test only affected projects
+```
+
+## 📚 Documentation
+
+- **[Release Process](RELEASE_PROCESS.md)** - Detailed release workflow
+- **[Branch Strategy](BRANCH_STRATEGY.md)** - Branch naming conventions
+- **[Branch Protection](.github/BRANCH_PROTECTION.md)** - GitHub branch protection rules
+
+## 🔧 Technical Details
+
+### CI/CD Pipeline
+
+The GitHub Actions workflow automatically:
+
+1. **On PR**: Runs build, test, lint, and type checking
+2. **On merge to develop**: Deploys to develop environment
+3. **On merge to staging**: Deploys to staging + runs E2E tests
+4. **On merge to main**: Deploys to production + runs smoke tests
+5. **On feature branches**: Deploys to preview environment
+
+### Environment Variables
+
+Set up these secrets in your GitHub repository:
+
+- `NX_CLOUD_ACCESS_TOKEN` - For Nx Cloud integration
+- `DEPLOY_TOKEN` - For deployment authentication
+- Environment-specific secrets as needed
+
+### Monitoring
+
+Each environment includes:
+- Health check endpoints
+- Monitoring and alerting
+- Log aggregation
+- Performance metrics
+
+## 🚀 Getting Started
+
+1. **Clone the repository**
+2. **Install dependencies**: `npm install`
+3. **Start development**: `npm run dev`
+4. **Create a feature branch**: `git checkout -b feature/your-feature`
+5. **Push to trigger deployment**: `git push origin feature/your-feature`
+
+## 📖 Nx Workspace
+
+This project is built with [Nx](https://nx.dev) - a powerful build system for monorepos.
+
+### Run tasks
+
+```bash
+# Start the dashboard app
 npx nx dev dashboard
-```
 
-To create a production bundle:
-
-```sh
+# Build the dashboard app
 npx nx build dashboard
-```
 
-To see all available targets to run for a project, run:
-
-```sh
+# See all available targets
 npx nx show project dashboard
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+### Add new projects
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+# Generate a new Next.js app
+npx nx g @nx/next:app my-app
 
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/next:app demo
+# Generate a new React library
+npx nx g @nx/react:lib my-lib
 ```
 
-To generate a new library, use:
+### Learn more
 
-```sh
-npx nx g @nx/react:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/nx-api/next?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [Nx Documentation](https://nx.dev)
+- [Nx Console](https://nx.dev/getting-started/editor-setup) - IDE extension
+- [Nx Community](https://go.nx.dev/community)
